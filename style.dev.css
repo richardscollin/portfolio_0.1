@@ -1126,6 +1126,10 @@ p.body-small {
 .works {
   position: relative;
   z-index: 5;
+  /* Desktop: overlap with the last 70vh of About, mirroring the hero -> About
+     handoff, so Works starts revealing while the emptied About card is still
+     scrolling away instead of after it. Tablet/phone reset this via margin: 0. */
+  margin-top: -70vh;
 }
 
 .works-desktop-pinned {
