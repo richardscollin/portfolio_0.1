@@ -113,6 +113,13 @@ window.addEventListener('beforeunload', () => {
     window.addEventListener('load', waitForScrollReset, { once: true });
   }
 
+  // A real interaction means the restore-and-reset race is over: open the gate
+  // straight away so the nav bar is never withheld from someone who has already
+  // started scrolling towards About on a slow connection.
+  ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(type => {
+    window.addEventListener(type, release, { once: true, passive: true });
+  });
+
   // Safety net: never leave the navigation permanently hidden if 'load' stalls.
   setTimeout(release, 3000);
 })();
