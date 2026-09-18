@@ -2938,6 +2938,13 @@ p.body-small {
     box-sizing: border-box;
   }
 
+  /* Overlap Works onto the last 70svh of About, matching the desktop handoff,
+     so the emptied About card and the incoming Works list share the scroll
+     instead of queueing a blank screen between them. */
+  .works {
+    margin-top: -70svh;
+  }
+
   .contact {
     height: 180svh;
     min-height: 180svh;
@@ -4501,6 +4508,13 @@ p.body-small {
     background: transparent;
     display: block;
     box-sizing: border-box;
+  }
+
+  /* Overlap Works onto the last 70svh of About, matching the desktop handoff,
+     so the emptied About card and the incoming Works list share the scroll
+     instead of queueing a blank screen between them. */
+  .works {
+    margin-top: -70svh;
   }
 
   .contact {
