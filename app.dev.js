@@ -72,6 +72,52 @@ window.addEventListener('beforeunload', () => {
 });
 
 /* ==========================================================================
+   -1.5. NAVIGATION BOOT GATE
+   The floating nav bars are switched on by the scroll engine as soon as the
+   page is scrolled past the hero. A browser may hand us a restored scroll
+   offset (session restore, BFCache, reopened tab) before the resets above run,
+   which made the bars paint and then fade out again — a flash of the menu bar
+   on load. Keep them unrendered (CSS: html:not(.nav-ready)) until the boot
+   scroll reset has actually landed back at the top.
+   ========================================================================== */
+(function initNavBootGate() {
+  const root = document.documentElement;
+  let released = false;
+
+  function release() {
+    if (released) return;
+    released = true;
+    root.classList.add('nav-ready');
+    if (window.ScrollEngine) {
+      window.ScrollEngine.measureAll();
+      window.ScrollEngine.requestTick();
+    }
+  }
+
+  // scroll-behavior is smooth, so the reset to (0, 0) is animated — wait for it
+  // to land instead of releasing on a scroll offset that is still unwinding.
+  function waitForScrollReset() {
+    const start = performance.now();
+    (function check() {
+      if (window.scrollY <= 1 || performance.now() - start > 1200) {
+        release();
+        return;
+      }
+      requestAnimationFrame(check);
+    })();
+  }
+
+  if (document.readyState === 'complete') {
+    waitForScrollReset();
+  } else {
+    window.addEventListener('load', waitForScrollReset, { once: true });
+  }
+
+  // Safety net: never leave the navigation permanently hidden if 'load' stalls.
+  setTimeout(release, 3000);
+})();
+
+/* ==========================================================================
    -1. IN-APP BROWSER / WEBVIEW DETECTION
    Detects LinkedIn, Facebook, Instagram, LINE, 104.com.tw and other common
    in-app browsers that embed a limited WebView instead of a full browser.

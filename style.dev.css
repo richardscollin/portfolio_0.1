@@ -392,18 +392,38 @@ body.is-webview .hero-canvas-sticky svg {
   z-index: 9000;
   pointer-events: none;
   opacity: 0;
+  visibility: hidden;
   transform: translateY(100%);
-  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.4s;
 }
 
 .desktop-navbar.visible {
   opacity: 1;
+  visibility: visible;
   transform: translateY(0);
   pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s;
 }
 
 .desktop-navbar.no-transition {
   transition: none;
+}
+
+/* ==========================================================================
+   NAVIGATION BOOT GATE
+   The nav bars are driven entirely by the scroll engine. Browsers can hand us
+   a restored scroll offset (session restore, bfcache, reopened tab) before the
+   page runs its own "reset to top" boot sequence, which made the scroll engine
+   switch the bars on and then off again — a flash of the menu bar on load.
+   Keep both bars fully unrendered until app.js reports the boot scroll has
+   settled by adding .nav-ready to <html>.
+   ========================================================================== */
+html:not(.nav-ready) .mobile-navbar,
+html:not(.nav-ready) .desktop-navbar {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: none !important;
 }
 
 .hero-canvas-sticky {
@@ -3652,17 +3672,20 @@ p.body-small {
     left: 50%;
     transform: translate(-50%, 50px);
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
     z-index: 9999;
     width: calc(100% - 96px);
     max-width: none;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, visibility 0s linear 0.4s;
   }
 
   .mobile-navbar.visible {
     transform: translate(-50%, 0);
     opacity: 1;
+    visibility: visible;
     pointer-events: all;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, visibility 0s;
   }
 
   /* While modal is open, navbar slides down out of viewport toward the bottom */
